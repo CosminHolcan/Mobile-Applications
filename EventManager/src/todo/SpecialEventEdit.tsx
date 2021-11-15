@@ -37,7 +37,8 @@ const SpecialEventEdit: React.FC<SpecialEventEditProps> = ({ history, match }) =
   useEffect(() => {
     log('useEffect');
     const routeId = match.params.id || '';
-    const item = items?.find(it => it.id === routeId);
+    console.log(items);
+    const item = items?.find(it => it._id === routeId);
     setItem(item);
     if (item) {
       setTitle(item.title);
@@ -46,10 +47,12 @@ const SpecialEventEdit: React.FC<SpecialEventEditProps> = ({ history, match }) =
       setDate(item.date);
     }
   }, [match.params.id, items]);
+
   const handleSave = () => {
     const editedItem = item ? { ...item, title, isApproved, numberOfPeople, date } : { title, isApproved, numberOfPeople, date };
     saveItem && saveItem(editedItem).then(() => history.goBack());
   };
+
   log('render');
   return (
     <IonPage>
@@ -81,6 +84,10 @@ const SpecialEventEdit: React.FC<SpecialEventEditProps> = ({ history, match }) =
             <IonLabel>Number of people</IonLabel>
             <IonRange min={50} max={2000} pin={true} value={numberOfPeople} onIonChange={e => setNumberPeople(e.detail.value as number)} />
           </IonItem>
+          <IonLoading isOpen={saving}/>
+            {savingError && (
+                <div>{savingError?.message || 'Failed to save book'}</div>
+            )}
         </IonList>
       </IonContent>
     </IonPage>

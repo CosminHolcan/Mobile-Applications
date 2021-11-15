@@ -1,5 +1,5 @@
 export interface SpecialEventProps {
-  id?: string;
+  _id?: string;
   title: string;
   numberOfPeople: number;
   date:Date;
