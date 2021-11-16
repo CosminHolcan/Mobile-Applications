@@ -86,7 +86,7 @@ const SpecialEventEdit: React.FC<SpecialEventEditProps> = ({ history, match }) =
           </IonItem>
           <IonLoading isOpen={saving}/>
             {savingError && (
-                <div>{savingError?.message || 'Failed to save book'}</div>
+                <div>{savingError?.message || 'Failed to save special event'}</div>
             )}
         </IonList>
       </IonContent>

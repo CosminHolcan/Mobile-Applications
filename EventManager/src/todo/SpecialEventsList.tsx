@@ -123,6 +123,11 @@ return (
       </IonHeader>
 
       <IonContent fullscreen>
+      {savedOffline && 
+          <p style={{color: "blueviolet", fontSize: "20px"}}>
+            Currently offline, your changes will be saved
+          </p>
+          }
         <IonList>
           {
             visibleItems &&
@@ -164,11 +169,6 @@ return (
                   LOGOUT
               </IonFabButton>
           </IonFab>
-          {savedOffline && 
-          <div color="blue">
-            Currently offline, your changes will be saved
-          </div>
-          }
       </IonContent>
   </IonPage>
 );
