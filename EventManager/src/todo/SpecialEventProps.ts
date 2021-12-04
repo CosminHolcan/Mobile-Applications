@@ -4,4 +4,7 @@ export interface SpecialEventProps {
   numberOfPeople: number;
   date:Date;
   isApproved:boolean;
+  latitude?: number;
+  longitude?: number;
+  webViewPath: string;
 }

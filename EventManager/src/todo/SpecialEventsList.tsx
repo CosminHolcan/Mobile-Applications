@@ -131,7 +131,7 @@ return (
         <IonList>
           {
             visibleItems &&
-                visibleItems.map(({_id, title, numberOfPeople, date, isApproved}) =>
+                visibleItems.map(({_id, title, numberOfPeople, date, isApproved, latitude, longitude, webViewPath}) =>
                 <IonCard key={_id}> 
                     <SpecialEvent
                           key={_id}
@@ -140,9 +140,12 @@ return (
                           numberOfPeople={numberOfPeople}
                           date={date}
                           isApproved={isApproved}
+                          latitude={latitude}
+                          longitude={longitude}
+                          webViewPath={webViewPath}
                           onEdit={_id => history.push(`/item/${_id}`)}
                       />
-                      <img src={"https://www.specialevents.com/sites/all/themes/penton_subtheme_specialevents/images/logos/header.png"}></img>
+                      {/* <img src={"https://www.specialevents.com/sites/all/themes/penton_subtheme_specialevents/images/logos/header.png"}></img> */}
                     </IonCard>
                     )
             }

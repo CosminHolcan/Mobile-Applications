@@ -4,6 +4,7 @@ import { RouteComponentProps } from 'react-router';
 import { IonButton, IonContent, IonHeader, IonInput, IonLoading, IonPage, IonTitle, IonToolbar } from '@ionic/react';
 import { AuthContext } from './AuthProvider';
 import { getLogger } from '../core';
+import AnimationDemo from './AnimationDemo';
 
 const log = getLogger('Login');
 
@@ -16,10 +17,15 @@ export const Login: React.FC<RouteComponentProps> = ({ history }) => {
   const { isAuthenticated, isAuthenticating, login, authenticationError } = useContext(AuthContext);
   const [state, setState] = useState<LoginState>({});
   const { username, password } = state;
+  const [showValidationError, setShowValidationError] = useState(false);
 
   const handleLogin = () => {
     log('handleLogin...');
-    login?.(username, password);
+    if(!username || !password) {setShowValidationError(true);}
+        else{
+            setShowValidationError(false);
+            login?.(username, password);
+        }
   };
 
   log('render');
@@ -37,6 +43,7 @@ export const Login: React.FC<RouteComponentProps> = ({ history }) => {
       </IonHeader>
       <IonContent>
         <IonInput
+          required type="text"
           placeholder="Username"
           value={username}
           onIonChange={e => setState({
@@ -44,6 +51,7 @@ export const Login: React.FC<RouteComponentProps> = ({ history }) => {
             username: e.detail.value || ''
           })}/>
         <IonInput
+          required type="text"
           placeholder="Password"
           value={password}
           onIonChange={e => setState({
@@ -59,6 +67,25 @@ export const Login: React.FC<RouteComponentProps> = ({ history }) => {
           </div>
         )}
         <IonButton onClick={handleLogin}>Login</IonButton>
+
+        {showValidationError && 
+        <AnimationDemo 
+        allMandatory="All fields are mandatory" 
+        usernameMandatory = {username? "username : checked" : "enter username"}
+        passwordMandatory = {showValidationError && password? "password : checked":"enter password"} 
+        authFailed = {undefined}
+        wrong = {undefined}
+        />}
+
+        {authenticationError && 
+        <AnimationDemo
+        allMandatory = "" 
+        usernameMandatory = {undefined}
+        passwordMandatory = {undefined} 
+        authFailed = "Authentication failed"
+        wrong = "Wrong credentials"
+        />
+        }
       </IonContent>
     </IonPage>
   );
