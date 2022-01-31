@@ -1,6 +1,12 @@
 package com.example.eventManager
 
+import android.content.Context
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -10,10 +16,14 @@ import android.view.Menu
 import android.view.MenuItem
 import com.example.eventManager.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), SensorEventListener {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
+
+    private val TAG = "MainActivity"
+    private lateinit var sensorManager: SensorManager
+    private var light: Sensor? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,6 +37,8 @@ class MainActivity : AppCompatActivity() {
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
 
+        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        light = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -49,5 +61,32 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration)
                 || super.onSupportNavigateUp()
+    }
+
+    override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {
+        Log.d(TAG, "onAccuracyChanged $accuracy");
+    }
+
+    override fun onSensorChanged(event: SensorEvent) {
+        // The light sensor returns a single value.
+        // Many sensors return 3 values, one for each axis.
+
+        val lux = event.values[0]
+        // Do something with this sensor value.
+        if (lux % 3 == 0f) {
+            Log.d(TAG, "onSensorChanged $lux");
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        light?.also {
+            sensorManager.registerListener(this, it, SensorManager.SENSOR_DELAY_NORMAL)
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        sensorManager.unregisterListener(this)
     }
 }

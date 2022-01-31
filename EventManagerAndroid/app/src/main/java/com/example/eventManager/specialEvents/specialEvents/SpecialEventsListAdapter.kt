@@ -44,8 +44,8 @@ class SpecialEventsListAdapter(
         Log.v(TAG, "onBindViewHolder $position")
 
         val specialEvent = specialEvents[position]
-        holder.productView.text = specialEvent.title
-        holder.priceView.text = specialEvent.numberOfPeople.toString()
+        holder.titleView.text = specialEvent.title
+        holder.numberOfPeopleView.text = specialEvent.numberOfPeople.toString()
 
         val calendar = Calendar.getInstance()
         calendar.time = specialEvent.date
@@ -55,7 +55,7 @@ class SpecialEventsListAdapter(
 
         holder.date.text = dateString
 
-        holder.withCreditCardView.text = if (specialEvent.isApproved) "Approved" else "Not approved yet"
+        holder.isApprovedView.text = if (specialEvent.isApproved) "Approved" else "Not approved yet"
 
         holder.itemView.tag = specialEvent
         holder.itemView.setOnClickListener(onSpecialEventClick)
@@ -64,15 +64,15 @@ class SpecialEventsListAdapter(
     override fun getItemCount() = specialEvents.size
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val productView: TextView
-        val priceView: TextView
-        val withCreditCardView: TextView
+        val titleView: TextView
+        val numberOfPeopleView: TextView
+        val isApprovedView: TextView
         val date: TextView
 
         init {
-            productView = view.findViewById(R.id.product)
-            priceView = view.findViewById(R.id.price)
-            withCreditCardView = view.findViewById(R.id.with_credit_card)
+            titleView = view.findViewById(R.id.product)
+            numberOfPeopleView = view.findViewById(R.id.numberOfPeople)
+            isApprovedView = view.findViewById(R.id.isApproved)
             date = view.findViewById(R.id.date)
         }
     }

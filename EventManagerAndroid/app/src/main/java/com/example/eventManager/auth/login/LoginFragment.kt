@@ -1,5 +1,11 @@
 package com.example.eventManager.auth.login
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,8 +15,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.example.eventManager.MainActivity
 import com.example.eventManager.R
 import com.example.eventManager.core.TAG
 import com.example.eventManager.databinding.FragmentLoginBinding
@@ -21,6 +30,8 @@ class LoginFragment : Fragment() {
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: LoginViewModel
+
+    val CHANNEL_ID = "CHANNEL_ID"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,6 +70,8 @@ class LoginFragment : Fragment() {
             binding.loading.visibility = View.GONE
             if (loginResult is Result.Success<*>) {
                 findNavController().navigate(R.id.SpecialEventListFragment)
+                createNotificationChannel()
+                createNotification()
             } else if (loginResult is Result.Error) {
                 binding.errorText.text = "Login error ${loginResult.exception.message}"
                 binding.errorText.visibility = View.VISIBLE
@@ -80,6 +93,43 @@ class LoginFragment : Fragment() {
             binding.loading.visibility = View.VISIBLE
             binding.errorText.visibility = View.GONE
             viewModel.login(binding.username.text.toString(), binding.password.text.toString())
+        }
+    }
+
+
+
+    fun createNotification() {
+        val intent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(activity, 0, intent, 0)
+        val builder = context?.let {
+            NotificationCompat.Builder(it, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentTitle("Welcome!")
+                .setContentText("Bine ai venit!")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                //.setContentIntent(pendingIntent)
+                .setAutoCancel(true)
+        }
+        with(NotificationManagerCompat.from(requireContext())) {
+            if (builder != null) {
+                notify(1, builder.build())
+            }
+        }
+    }
+
+    fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = "My channel name"
+            val descriptionText = "My channel description"
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
+                description = descriptionText
+            }
+            val notificationManager: NotificationManager =
+                activity?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
         }
     }
 }
